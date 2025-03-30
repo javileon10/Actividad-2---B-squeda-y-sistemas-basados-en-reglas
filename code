@@ -1,0 +1,34 @@
+from collections import deque
+import heapq
+
+def a_estrella(grafo, inicio, objetivo, heuristica):
+    cola = []
+    heapq.heappush(cola, (0 + heuristica(inicio, objetivo), 0, inicio, [inicio]))
+    visitados = set()
+
+    while cola:
+        _, costo, nodo, ruta = heapq.heappop(cola)
+        if nodo == objetivo:
+            return ruta
+        if nodo not in visitados:
+            visitados.add(nodo)
+            for vecino, distancia in grafo[nodo].items():
+                heapq.heappush(cola, (costo + distancia + heuristica(vecino, objetivo), costo + distancia, vecino, ruta + [vecino]))
+    return None
+
+# Definir el grafo y la heurística
+grafo = {
+    'A': {'B': 5, 'C': 2},
+    'B': {'A': 5, 'D': 4},
+    'C': {'A': 2, 'D': 7},
+    'D': {'B': 4, 'C': 7, 'E': 3},
+    'E': {'D': 3}
+}
+
+def heuristica(nodo, objetivo):
+    distancias = {'A': 10, 'B': 6, 'C': 8, 'D': 3, 'E': 0}
+    return distancias[nodo]
+
+# Ejecutar
+ruta_optima = a_estrella(grafo, 'A', 'E', heuristica)
+print("Ruta óptima:", ruta_optima)
